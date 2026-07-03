@@ -1,6 +1,6 @@
 # Douyin Boundary
 
-Douyin support in this skill is for CLI-assisted delivery, not automated visual QA.
+Douyin support in this skill is centered on CLI-assisted delivery. Rendered visual QA requires a proven route-control, selector-inspection, and screenshot-export path.
 
 ## What Is Supported
 
@@ -24,9 +24,9 @@ tma audit --host douyin /path-or-appid
 
 Use `TMA_CLI_HOME=/tmp/tma-home` when testing login state or tokens without touching the user's normal CLI home.
 
-## What Is Not Supported Yet
+## Current Automation Gap
 
-Do not promise these from the current Douyin adapter:
+The current Douyin adapter does not provide:
 
 - Scripted route relaunch.
 - Selector text/box inspection.
@@ -48,4 +48,4 @@ Required proof before upgrading this skill:
 
 ## Agent Rule
 
-For Douyin, say "I can help with CLI preview/upload/package checks" unless the user provides screenshots or a future adapter proves visual automation. Never infer visual quality from `tma preview`; preview produces a QR/schema, not a rendered screenshot.
+For Douyin, frame help around CLI preview, upload, package-size, build, and audit checks. Treat visual quality review as requiring user-provided screenshots or a future adapter with proven visual automation. `tma preview` produces a QR/schema, not a rendered screenshot.

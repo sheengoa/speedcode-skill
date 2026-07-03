@@ -10,7 +10,7 @@ Rendered UI is the contract. Do not approve visual or interaction work from code
 ## Decision Rule
 
 - **WeChat**: use the bundled automation script. Screenshot, inspect, fix, and re-run.
-- **Douyin**: use CLI for package, preview, upload, and audit support only. Do not claim automated visual QA unless a future adapter proves route control, selector inspection, and screenshot export.
+- **Douyin**: use CLI for package, preview, upload, and audit support. Treat rendered visual QA as out of scope until an adapter proves route control, selector inspection, and screenshot export.
 - **Other runtimes**: first prove the same three capabilities: route control, element inspection, screenshot export.
 
 ## Required Inputs
