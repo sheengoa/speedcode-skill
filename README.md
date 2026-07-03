@@ -1,6 +1,8 @@
 # Speedcode Skill
 
-`speedcode-skill` 是一个用于小程序前端真实渲染检查的 Codex/AI Agent skill。它强调：视觉和交互质量必须通过开发者工具里的真实页面验证，不能只靠代码检查下结论。
+Language: [中文](#speedcode-skill) | [English](#english)
+
+`speedcode-skill` 是一个用于小程序前端真实渲染检查的 AI coding agent skill，适用于 Codex、Claude Code、opencode 以及其他兼容 skills 机制的代理。它强调：视觉和交互质量必须通过开发者工具里的真实页面验证，不能只靠代码检查下结论。
 
 当前重点支持微信小程序的自动化截图、页面检查和交互冒烟测试；抖音小程序目前覆盖 CLI 交付辅助，自动视觉 QA 需要额外的截图和元素检查链路。
 
@@ -21,16 +23,22 @@
 
 ## 安装
 
-从 GitHub 安装：
+先检查仓库中可识别的 skills：
 
 ```bash
-npx skills add <github-owner>/<repo> -g --skill speedcode-skill
+npx skills add sheengoa/speedcode-skill --list
+```
+
+全局安装 `speedcode-skill`：
+
+```bash
+npx skills add sheengoa/speedcode-skill -g --skill speedcode-skill
 ```
 
 如果要安装给所有支持的 agent：
 
 ```bash
-npx skills add <github-owner>/<repo> -g --all
+npx skills add sheengoa/speedcode-skill -g --all
 ```
 
 更新已安装的 skill：
@@ -41,7 +49,7 @@ npx skills update speedcode-skill -g
 
 ## 使用方式
 
-安装后，在支持 skills 的 AI Agent 中直接说明平台、项目路径和要检查的页面，例如：
+安装后，在支持 skills 的 AI coding agent 中直接说明平台、项目路径和要检查的页面，例如：
 
 ```text
 使用 speedcode-skill 检查微信小程序 /pages/index/index 页面，项目路径是 /path/to/wechat-project。
@@ -160,7 +168,180 @@ node --check ./speedcode-skill/scripts/wechat-visual-qa.js
 发布后可检查安装器是否能识别：
 
 ```bash
-npx skills add <github-owner>/<repo> --list
-npx skills add <github-owner>/<repo> -g --skill speedcode-skill --copy
+npx skills add sheengoa/speedcode-skill --list
+npx skills add sheengoa/speedcode-skill -g --skill speedcode-skill --copy
+npx skills list -g
+```
+
+## English
+
+`speedcode-skill` is an AI coding agent skill for real rendered-page verification in mini-program frontends. It is intended for Codex, Claude Code, opencode, and other agents compatible with the skills mechanism. Its core principle is simple: visual and interaction quality should be verified in the actual developer-tool runtime, not approved from code inspection alone.
+
+The current implementation focuses on automated screenshots, page inspection, and interaction smoke tests for WeChat Mini Programs. For Douyin Mini Programs, it currently covers CLI-assisted delivery workflows; automated visual QA requires an additional screenshot and element-inspection path.
+
+## Capabilities
+
+- WeChat Mini Programs: open pages, take screenshots, read selector text and layout information, and generate `summary.json` through WeChat DevTools and `miniprogram-automator`.
+- WeChat AI/input flows: declare selectors for inputs, send buttons, privacy prompts, and related controls in a config file, then run simple question-answer or input interaction checks.
+- Douyin Mini Programs: use `tt-ide-cli` for session checks, package-size checks, npm builds, previews, uploads, and audit workflows.
+- Other mini-program runtimes: treat automated visual QA as available only after route control, element inspection, and screenshot export have been proven.
+
+## Use Cases
+
+- Check whether mini-program pages collide with the native title bar, capsule button, or content area.
+- Verify that buttons, inputs, and sticky bottom actions are usable at real device sizes.
+- Smoke-test AI/chat pages for send actions, loading states, answer insertion, and visible error states.
+- Keep screenshots and structured summaries before QA handoff or release submission.
+- Distinguish platforms with automated screenshot verification from platforms that currently support CLI-assisted delivery only.
+
+## Installation
+
+Check the skills discoverable from the repository:
+
+```bash
+npx skills add sheengoa/speedcode-skill --list
+```
+
+Install `speedcode-skill` globally:
+
+```bash
+npx skills add sheengoa/speedcode-skill -g --skill speedcode-skill
+```
+
+Install for all supported agents:
+
+```bash
+npx skills add sheengoa/speedcode-skill -g --all
+```
+
+Update an installed skill:
+
+```bash
+npx skills update speedcode-skill -g
+```
+
+## Usage
+
+After installation, tell a skills-capable AI coding agent the platform, project path, and pages to inspect:
+
+```text
+Use speedcode-skill to check the WeChat Mini Program page /pages/index/index. The project path is /path/to/wechat-project.
+```
+
+For Douyin projects, describe the task within the current support range:
+
+```text
+Use speedcode-skill to help check Douyin Mini Program package size, preview, and upload flow.
+```
+
+## WeChat Quick Start
+
+Prepare the automation dependency:
+
+```bash
+./speedcode-skill/scripts/ensure-wechat-automator.sh
+```
+
+Check a single page:
+
+```bash
+node ./speedcode-skill/scripts/wechat-visual-qa.js \
+  --project /path/to/wechat-project \
+  --route /pages/index/index \
+  --out-dir /tmp/speedcode-vqa
+```
+
+Check multiple pages with a config file:
+
+```bash
+node ./speedcode-skill/scripts/wechat-visual-qa.js \
+  --project /path/to/wechat-project \
+  --config /path/to/visual-qa.json \
+  --flow full \
+  --out-dir /tmp/speedcode-vqa-full
+```
+
+Check an AI/input flow:
+
+```bash
+node ./speedcode-skill/scripts/wechat-visual-qa.js \
+  --project /path/to/wechat-project \
+  --config /path/to/visual-qa.json \
+  --flow ai \
+  --ai-question "Explain this page in one sentence" \
+  --out-dir /tmp/speedcode-vqa-ai
+```
+
+## Config Example
+
+```json
+{
+  "selectors": [".page-topbar", ".page-title", ".primary", ".composer"],
+  "flows": {
+    "full": ["/pages/index/index", "/pages/report/report"],
+    "ai": {
+      "welcomeRoute": "/pages/welcome/welcome",
+      "route": "/pages/ai/ai",
+      "inputSelector": "textarea",
+      "sendSelector": ".composer button",
+      "privacyAgreeSelector": ".privacy-actions button:last-child"
+    }
+  }
+}
+```
+
+The script writes screenshots and `summary.json` to the output directory. Issue reports should include the route, screenshot path, visible symptom, likely cause, and suggested fix.
+
+## Visual QA Standard
+
+- Native capsule, back button, title, and page content must not collide.
+- Buttons should have stable dimensions, centered text, and visible pressed or focus feedback.
+- Inputs should remain visible after typing; keyboards or composers should not hide key content.
+- Mobile layouts should avoid cramped cards, clipped text, horizontal overflow, and overly dense spacing.
+- Sticky bottom actions should respect the safe area and should not cover content.
+- AI/chat flows should leave loading states, append answers in the current view, and hide technical errors.
+
+## Douyin Support Scope
+
+Current Douyin Mini Program support focuses on CLI delivery workflows:
+
+```bash
+tma check-session
+tma project-size --json /path/to/douyin-project
+tma build-npm --project-path /path/to/douyin-project
+tma preview --miniapp-path pages/index/index --qrcode-output /tmp/douyin-preview.png /path/to/douyin-project
+tma upload -c "Release notes" -v 0.1.1 --qrcode-output /tmp/douyin-upload.png /path/to/douyin-project
+tma audit --host douyin /path-or-appid
+```
+
+`tma preview` generates a preview QR code or schema. It is not the same as a rendered page screenshot. Automated visual QA requires scriptable route opening, element inspection, and screenshot export.
+
+## Repository Structure
+
+```text
+speedcode-skill/
+├── README.md
+└── speedcode-skill/
+    ├── SKILL.md
+    ├── references/
+    └── scripts/
+```
+
+This structure keeps the repository ready for additional skills later.
+
+## Local Validation
+
+Before publishing, run:
+
+```bash
+python3 /home/ao/.codex/skills/.system/skill-creator/scripts/quick_validate.py ./speedcode-skill
+node --check ./speedcode-skill/scripts/wechat-visual-qa.js
+```
+
+After publishing, verify that the installer can discover the skill:
+
+```bash
+npx skills add sheengoa/speedcode-skill --list
+npx skills add sheengoa/speedcode-skill -g --skill speedcode-skill --copy
 npx skills list -g
 ```
